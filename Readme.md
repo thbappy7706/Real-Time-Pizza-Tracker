@@ -311,55 +311,7 @@ PUT    /admin/pizzas/{id}  - Update pizza
 DELETE /admin/pizzas/{id}  - Delete pizza
 ```
 
-## Frontend Architecture
-
-### Component Structure
-
-```
-Pages/
-├── Auth/
-│   ├── Login.tsx
-│   └── Register.tsx
-├── Menu/
-│   ├── Index.tsx          (Pizza listing)
-│   └── Show.tsx           (Pizza customization)
-├── Orders/
-│   ├── Index.tsx          (Order history)
-│   └── Show.tsx           (Real-time tracking)
-├── Checkout/
-│   └── Index.tsx          (Payment)
-├── Admin/
-│   ├── Dashboard.tsx      (Real-time orders)
-│   ├── Orders/
-│   │   ├── Index.tsx
-│   │   └── Show.tsx
-│   └── Pizzas/
-│       ├── Index.tsx
-│       ├── Create.tsx
-│       └── Edit.tsx
-└── Layout.tsx             (Main layout)
-
-Components/
-├── ui/                    (shadcn/ui components)
-│   ├── button.tsx
-│   ├── card.tsx
-│   ├── badge.tsx
-│   └── ...
-└── custom/                (App-specific components)
-
-Hooks/
-└── useEcho.ts            (WebSocket hooks)
-
-Lib/
-└── utils.ts              (Utilities)
-```
-
-### State Management
-
-- **Server State:** Inertia.js props (Laravel backend)
-- **Local State:** React useState for UI state
-- **Real-time State:** WebSocket events update local state
-- **No Redux needed:** Inertia handles server state sync
+ 
 
 ## Performance Optimizations
 
