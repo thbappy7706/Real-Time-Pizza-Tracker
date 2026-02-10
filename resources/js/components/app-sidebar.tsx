@@ -1,5 +1,14 @@
-import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import {
+    BookOpen,
+    Folder,
+    LayoutGrid,
+    Pizza,
+    ShoppingCart,
+    ClipboardList,
+    Settings,
+    UtensilsCrossed,
+} from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -12,39 +21,59 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
-import type { NavItem } from '@/types';
+import type { NavItem, SharedData } from '@/types';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
+const customerNavItems: NavItem[] = [
+    {
+        title: 'Menu',
+        href: '/menu',
+        icon: Pizza,
+    },
+    {
+        title: 'My Orders',
+        href: '/orders',
+        icon: ShoppingCart,
+    },
+];
+
+const adminNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard(),
+        href: '/admin/dashboard',
         icon: LayoutGrid,
+    },
+    {
+        title: 'Orders',
+        href: '/admin/orders',
+        icon: ClipboardList,
+    },
+    {
+        title: 'Pizzas',
+        href: '/admin/pizzas',
+        icon: UtensilsCrossed,
     },
 ];
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        title: 'Settings',
+        href: '/settings/profile',
+        icon: Settings,
     },
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage<SharedData>().props;
+    const isAdmin = (auth.user as any)?.role === 'admin';
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href="/menu" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -53,7 +82,8 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={customerNavItems} />
+                {isAdmin && <NavMain items={adminNavItems} />}
             </SidebarContent>
 
             <SidebarFooter>

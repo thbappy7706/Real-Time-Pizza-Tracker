@@ -7,35 +7,36 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import type { Topping } from '@/types/pizza';
+import type { AdminPizzaEdit, Topping } from '@/types/pizza';
 
 interface Props {
+    pizza: AdminPizzaEdit;
     toppings: Topping[];
 }
 
-export default function AdminPizzasCreate({ toppings }: Props) {
+export default function AdminPizzasEdit({ pizza, toppings }: Props) {
     const form = useForm({
-        name: '',
-        description: '',
-        base_price: '',
-        preparation_time: '20',
-        is_vegetarian: false,
-        is_featured: false,
-        is_available: true,
-        image_url: '',
-        default_toppings: [] as number[],
+        name: pizza.name,
+        description: pizza.description,
+        base_price: String(pizza.base_price),
+        preparation_time: String(pizza.preparation_time),
+        is_vegetarian: pizza.is_vegetarian,
+        is_featured: pizza.is_featured,
+        is_available: pizza.is_available,
+        image_url: pizza.image_url || '',
+        default_toppings: pizza.default_toppings || [],
     });
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        form.post('/admin/pizzas');
+        form.put(`/admin/pizzas/${pizza.id}`);
     }
 
     function toggleTopping(id: number) {
-        const toppings = form.data.default_toppings.includes(id)
+        const selected = form.data.default_toppings.includes(id)
             ? form.data.default_toppings.filter((t) => t !== id)
             : [...form.data.default_toppings, id];
-        form.setData('default_toppings', toppings);
+        form.setData('default_toppings', selected);
     }
 
     // Group toppings by category
@@ -51,10 +52,10 @@ export default function AdminPizzasCreate({ toppings }: Props) {
             breadcrumbs={[
                 { title: 'Admin', href: '/admin/dashboard' },
                 { title: 'Pizzas', href: '/admin/pizzas' },
-                { title: 'Create', href: '/admin/pizzas/create' },
+                { title: 'Edit', href: `/admin/pizzas/${pizza.id}/edit` },
             ]}
         >
-            <Head title="Create Pizza" />
+            <Head title={`Edit - ${pizza.name}`} />
 
             <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
                 <Button
@@ -67,8 +68,8 @@ export default function AdminPizzasCreate({ toppings }: Props) {
                 </Button>
 
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold">Create Pizza</h1>
-                    <p className="mt-1 text-muted-foreground">Add a new pizza to your menu</p>
+                    <h1 className="text-3xl font-bold">Edit Pizza</h1>
+                    <p className="mt-1 text-muted-foreground">Update {pizza.name}</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -97,7 +98,6 @@ export default function AdminPizzasCreate({ toppings }: Props) {
                                     id="description"
                                     value={form.data.description}
                                     onChange={(e) => form.setData('description', e.target.value)}
-                                    placeholder="Describe the pizza..."
                                     rows={3}
                                 />
                                 {form.errors.description && (
@@ -115,7 +115,6 @@ export default function AdminPizzasCreate({ toppings }: Props) {
                                         min="0"
                                         value={form.data.base_price}
                                         onChange={(e) => form.setData('base_price', e.target.value)}
-                                        placeholder="12.99"
                                     />
                                     {form.errors.base_price && (
                                         <p className="text-sm text-destructive">{form.errors.base_price}</p>
@@ -229,7 +228,7 @@ export default function AdminPizzasCreate({ toppings }: Props) {
                             ) : (
                                 <Save className="size-4" />
                             )}
-                            Create Pizza
+                            Update Pizza
                         </Button>
                         <Button type="button" variant="outline" asChild>
                             <Link href="/admin/pizzas">Cancel</Link>

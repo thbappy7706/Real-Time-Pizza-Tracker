@@ -15,7 +15,7 @@ use Laravel\Fortify\Features;
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
     // Customer Routes
-    Route::get('/', [MenuController::class, 'index'])->name('home');
+    //    Route::get('/', [MenuController::class, 'index'])->name('home');
     Route::get('/menu', [MenuController::class, 'index'])->name('menu');
     Route::get('/menu/{pizza}', [MenuController::class, 'show'])->name('menu.show');
 
@@ -44,11 +44,11 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/settings.php';
 
-// Route::get('/', function () {
-//    return Inertia::render('welcome', [
-//        'canRegister' => Features::enabled(Features::registration()),
-//    ]);
-// })->name('home');
+Route::get('/', function () {
+    return Inertia::render('welcome', [
+        'canRegister' => Features::enabled(Features::registration()),
+    ]);
+})->name('home');
 //
 Route::get('dashboard', function () {
     return Inertia::render('dashboard');
