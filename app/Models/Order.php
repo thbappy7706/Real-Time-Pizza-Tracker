@@ -5,6 +5,9 @@ namespace App\Models;
 use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
@@ -51,32 +54,32 @@ class Order extends Model
         parent::boot();
 
         static::creating(function ($order) {
-            $order->order_number = 'ORD-' . strtoupper(uniqid());
+            $order->order_number = 'ORD-'.strtoupper(uniqid());
         });
     }
 
     // Relationships
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function items()
+    public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    public function payment()
+    public function payment(): HasOne
     {
         return $this->hasOne(Payment::class);
     }
 
-    public function delivery()
+    public function delivery(): HasOne
     {
         return $this->hasOne(Delivery::class);
     }
 
-    public function review()
+    public function review(): HasOne
     {
         return $this->hasOne(Review::class);
     }
@@ -120,7 +123,7 @@ class Order extends Model
     {
         $steps = OrderStatus::getProgressSteps();
         $currentIndex = array_search($this->status, $steps);
-        
+
         if ($currentIndex === false) {
             return 0;
         }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Topping extends Model
@@ -28,7 +29,7 @@ class Topping extends Model
     }
 
     // Relationships
-    public function pizzas()
+    public function pizzas(): BelongsToMany
     {
         return $this->belongsToMany(Pizza::class)
             ->withPivot('is_default')

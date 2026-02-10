@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pizza extends Model
@@ -33,26 +35,26 @@ class Pizza extends Model
     }
 
     // Relationships
-    public function toppings()
+    public function toppings(): BelongsToMany
     {
         return $this->belongsToMany(Topping::class)
             ->withPivot('is_default')
             ->withTimestamps();
     }
 
-    public function defaultToppings()
+    public function defaultToppings(): BelongsToMany
     {
         return $this->belongsToMany(Topping::class)
             ->wherePivot('is_default', true)
             ->withTimestamps();
     }
 
-    public function orderItems()
+    public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    public function reviews()
+    public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
     }

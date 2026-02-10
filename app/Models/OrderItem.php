@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderItem extends Model
 {
@@ -37,12 +38,12 @@ class OrderItem extends Model
     }
 
     // Relationships
-    public function order()
+    public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
     }
 
-    public function pizza()
+    public function pizza(): BelongsTo
     {
         return $this->belongsTo(Pizza::class);
     }
@@ -50,7 +51,7 @@ class OrderItem extends Model
     // Size Multipliers
     public static function getSizeMultiplier(string $size): float
     {
-        return match($size) {
+        return match ($size) {
             'small' => 0.8,
             'medium' => 1.0,
             'large' => 1.3,
@@ -62,7 +63,7 @@ class OrderItem extends Model
     // Crust Prices
     public static function getCrustPrice(string $crust): float
     {
-        return match($crust) {
+        return match ($crust) {
             'thin' => 0,
             'regular' => 0,
             'thick' => 2.00,
