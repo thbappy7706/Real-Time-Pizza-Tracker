@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -37,9 +38,34 @@ class DashboardController extends Controller
                 'driver_name' => $order->delivery?->driver?->name,
             ]);
 
+        // Weekly performance data for chart
+        $weeklyData = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $date = today()->subDays($i);
+            $dayOrders = Order::whereDate('created_at', $date);
+            
+            $weeklyData->push([
+                'name' => $date->format('D'),
+                'orders' => $dayOrders->count(),
+                'revenue' => (float) $dayOrders->whereIn('status', ['delivered'])->sum('total'),
+            ]);
+        }
+
+        // Order status distribution
+        $statusDistribution = Order::select('status', DB::raw('count(*) as count'))
+            ->where('created_at', '>=', today()->subDays(30))
+            ->groupBy('status')
+            ->get()
+            ->map(fn ($item) => [
+                'status' => ucfirst(str_replace('_', ' ', $item->status->value)),
+                'count' => $item->count,
+            ]);
+
         return Inertia::render('Admin/Dashboard', [
             'stats' => $stats,
             'activeOrders' => $activeOrders,
+            'weeklyData' => $weeklyData,
+            'statusDistribution' => $statusDistribution,
         ]);
     }
 }
