@@ -22,7 +22,7 @@ class OrderPlaced implements ShouldBroadcast
     {
         return [
             new PresenceChannel('admin.dashboard'),
-            new Channel('orders.' . $this->order->id),
+            new Channel('orders.'.$this->order->id),
         ];
     }
 

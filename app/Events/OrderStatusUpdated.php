@@ -23,8 +23,8 @@ class OrderStatusUpdated implements ShouldBroadcast
     {
         return [
             new PresenceChannel('admin.dashboard'),
-            new Channel('orders.' . $this->order->id),
-            new Channel('users.' . $this->order->user_id),
+            new Channel('orders.'.$this->order->id),
+            new Channel('users.'.$this->order->user_id),
         ];
     }
 

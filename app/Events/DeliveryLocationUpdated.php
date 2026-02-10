@@ -20,8 +20,8 @@ class DeliveryLocationUpdated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('orders.' . $this->delivery->order_id),
-            new Channel('users.' . $this->delivery->order->user_id),
+            new Channel('orders.'.$this->delivery->order_id),
+            new Channel('users.'.$this->delivery->order->user_id),
         ];
     }
 
