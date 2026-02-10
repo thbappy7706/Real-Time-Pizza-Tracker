@@ -1,4 +1,5 @@
 import { Head, router, useForm } from '@inertiajs/react';
+import { useEcho } from '@laravel/echo-react';
 import {
     ArrowLeft,
     Check,
@@ -13,6 +14,7 @@ import {
     MessageSquare,
 } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -36,7 +38,8 @@ const PROGRESS_STEPS = [
     { key: 'delivered', label: 'Delivered' },
 ];
 
-export default function OrderShow({ order }: Props) {
+export default function OrderShow({ order: initialOrder }: Props) {
+    const [order, setOrder] = useState(initialOrder);
     const [showReview, setShowReview] = useState(false);
     const reviewForm = useForm({
         rating: 5,
@@ -44,6 +47,28 @@ export default function OrderShow({ order }: Props) {
         food_rating: 5,
         delivery_rating: 5,
     });
+
+    // Listen for real-time order status updates
+    useEcho(
+        `orders.${order.id}`,
+        '.order.status.updated',
+        (event: any) => {
+            // Update order state with new status and progress
+            setOrder((prev) => ({
+                ...prev,
+                status: event.status,
+                status_label: event.status_label,
+                progress_percentage: event.progress_percentage,
+                estimated_delivery_time: event.estimated_delivery_time,
+            }));
+
+            // Show toast notification
+            toast.success('Order Status Updated', {
+                description: `Your order is now ${event.status_label}`,
+                duration: 5000,
+            });
+        },
+    );
 
     const isCancelled = order.status === 'cancelled' || order.status === 'rejected';
     const currentStepIndex = PROGRESS_STEPS.findIndex((s) => s.key === order.status);
