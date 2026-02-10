@@ -48,7 +48,7 @@ export default function CheckoutIndex({ order, stripe_key }: Props) {
         >
             <Head title="Checkout" />
 
-            <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="w-full px-4 py-8 sm:px-6 lg:px-8">
                 <Button
                     variant="ghost"
                     className="mb-6 gap-2"
@@ -112,8 +112,8 @@ export default function CheckoutIndex({ order, stripe_key }: Props) {
                                 type="button"
                                 onClick={() => setPaymentMethod('cash')}
                                 className={`flex w-full items-center gap-4 rounded-xl border-2 p-4 text-left transition-all ${paymentMethod === 'cash'
-                                        ? 'border-primary bg-primary/5 shadow-sm'
-                                        : 'border-transparent hover:border-muted-foreground/20'
+                                    ? 'border-primary bg-primary/5 shadow-sm'
+                                    : 'border-transparent hover:border-muted-foreground/20'
                                     }`}
                             >
                                 <div className={`flex size-10 items-center justify-center rounded-lg ${paymentMethod === 'cash' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
@@ -137,8 +137,8 @@ export default function CheckoutIndex({ order, stripe_key }: Props) {
                                     type="button"
                                     onClick={() => setPaymentMethod('stripe')}
                                     className={`flex w-full items-center gap-4 rounded-xl border-2 p-4 text-left transition-all ${paymentMethod === 'stripe'
-                                            ? 'border-primary bg-primary/5 shadow-sm'
-                                            : 'border-transparent hover:border-muted-foreground/20'
+                                        ? 'border-primary bg-primary/5 shadow-sm'
+                                        : 'border-transparent hover:border-muted-foreground/20'
                                         }`}
                                 >
                                     <div className={`flex size-10 items-center justify-center rounded-lg ${paymentMethod === 'stripe' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>

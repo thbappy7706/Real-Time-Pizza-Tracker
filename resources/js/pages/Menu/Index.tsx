@@ -36,7 +36,7 @@ export default function MenuIndex({ pizzas }: Props) {
         <AppLayout breadcrumbs={[{ title: 'Menu', href: '/menu' }]}>
             <Head title="Menu" />
 
-            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="w-full px-4 py-8 sm:px-6 lg:px-8">
                 {/* Hero Header */}
                 <div className="mb-10 text-center">
                     <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">

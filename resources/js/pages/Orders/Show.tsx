@@ -64,7 +64,7 @@ export default function OrderShow({ order }: Props) {
         >
             <Head title={`Order #${order.order_number}`} />
 
-            <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="w-full px-4 py-8 sm:px-6 lg:px-8">
                 <Button
                     variant="ghost"
                     className="mb-6 gap-2"
@@ -122,8 +122,8 @@ export default function OrderShow({ order }: Props) {
                                     >
                                         <div
                                             className={`flex size-7 items-center justify-center rounded-full text-xs font-bold ${i <= currentStepIndex
-                                                    ? 'bg-primary text-primary-foreground'
-                                                    : 'bg-muted text-muted-foreground'
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'bg-muted text-muted-foreground'
                                                 }`}
                                         >
                                             {i < currentStepIndex ? <Check className="size-3.5" /> : i + 1}

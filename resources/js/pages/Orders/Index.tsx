@@ -16,7 +16,7 @@ export default function OrdersIndex({ orders }: Props) {
         <AppLayout breadcrumbs={[{ title: 'My Orders', href: '/orders' }]}>
             <Head title="My Orders" />
 
-            <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="w-full px-4 py-8 sm:px-6 lg:px-8">
                 <div className="mb-8 flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold">My Orders</h1>

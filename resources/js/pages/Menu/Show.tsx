@@ -98,7 +98,7 @@ export default function MenuShow({ pizza }: Props) {
         >
             <Head title={pizza.name} />
 
-            <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="w-full px-4 py-8 sm:px-6 lg:px-8">
                 <Button
                     variant="ghost"
                     className="mb-6 gap-2"

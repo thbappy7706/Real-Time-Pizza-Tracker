@@ -56,7 +56,7 @@ export default function AdminPizzasCreate({ toppings }: Props) {
         >
             <Head title="Create Pizza" />
 
-            <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="w-full px-4 py-8 sm:px-6 lg:px-8">
                 <Button
                     variant="ghost"
                     className="mb-6 gap-2"

@@ -1,10 +1,8 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
-    BookOpen,
-    Folder,
-    LayoutGrid,
     Pizza,
     ShoppingCart,
+    LayoutGrid,
     ClipboardList,
     Settings,
     UtensilsCrossed,
@@ -67,13 +65,16 @@ export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
     const isAdmin = (auth.user as any)?.role === 'admin';
 
+    const navItems = isAdmin ? adminNavItems : customerNavItems;
+    const homeHref = isAdmin ? '/admin/dashboard' : '/menu';
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href="/menu" prefetch>
+                            <Link href={homeHref} prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -82,8 +83,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={customerNavItems} />
-                {isAdmin && <NavMain items={adminNavItems} />}
+                <NavMain items={navItems} />
             </SidebarContent>
 
             <SidebarFooter>
