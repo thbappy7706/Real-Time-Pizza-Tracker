@@ -158,6 +158,9 @@ export default function AdminDashboard({
         const handleStatusUpdated = (event: any) => {
             console.log('📦 STATUS UPDATE EVENT RECEIVED:', event);
 
+            // Play notification sound
+            playNotificationSoundDoubleBeep();
+
             toast.info('📦 Order Status Updated', {
                 description: `Order #${event.order_number} is now ${event.status_label}`,
                 duration: 5000,
