@@ -66,7 +66,9 @@ class MenuController extends Controller
 
     public function show(Pizza $pizza)
     {
-        $pizza->load(['defaultToppings', 'reviews.user']);
+        $pizza->load(['defaultToppings', 'reviews.user'])
+            ->loadAvg('reviews', 'rating')
+            ->loadCount('reviews');
 
         return Inertia::render('Menu/Show', [
             'pizza' => [
@@ -77,7 +79,8 @@ class MenuController extends Controller
                 'base_price' => $pizza->base_price,
                 'is_vegetarian' => $pizza->is_vegetarian,
                 'preparation_time' => $pizza->preparation_time,
-                'average_rating' => round($pizza->average_rating, 1),
+                'average_rating' => round($pizza->reviews_avg_rating ?? 0, 1),
+                'reviews_count' => $pizza->reviews_count,
                 'default_toppings' => $pizza->defaultToppings,
                 'reviews' => $pizza->reviews->map(fn ($r) => [
                     'id' => $r->id,
