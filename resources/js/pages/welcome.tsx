@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 // @ts-ignore
 import { Label } from '@/components/ui/label'
-import { dashboard, login, register } from '@/routes'
+import {  login, register } from '@/routes'
 import type { SharedData } from '@/types'
 
 // @ts-ignore
@@ -125,8 +125,13 @@ export default function Welcome({ canRegister = true }: { canRegister?: boolean 
                             </Button>
 
                             {auth?.user ? (
-                                <Button asChild className="bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/30">
-                                    <Link href={dashboard()}>Dashboard</Link>
+                                <Button
+                                    asChild
+                                    className="bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/30"
+                                >
+                                    <Link href={auth.user.role === 'admin' ? '/admin/dashboard' : '/menu'}>
+                                        Dashboard
+                                    </Link>
                                 </Button>
                             ) : (
                                 <>
@@ -139,12 +144,16 @@ export default function Welcome({ canRegister = true }: { canRegister?: boolean 
                                     </Button>
 
                                     {canRegister && (
-                                        <Button asChild className="bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/30">
+                                        <Button
+                                            asChild
+                                            className="bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/30"
+                                        >
                                             <Link href={register()}>Register</Link>
                                         </Button>
                                     )}
                                 </>
                             )}
+
                         </div>
                     </nav>
 
@@ -162,7 +171,7 @@ export default function Welcome({ canRegister = true }: { canRegister?: boolean 
 
                         <div className="mt-8 flex justify-center gap-4">
                             <Button size="lg" asChild className="bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/30 text-white">
-                                <Link href={auth?.user ? dashboard() : register()}>
+                                <Link href={auth?.user ?  "/admin/menu" : register()}>
                                     Order Pizza
                                 </Link>
                             </Button>

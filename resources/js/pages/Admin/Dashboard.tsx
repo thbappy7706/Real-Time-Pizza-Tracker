@@ -71,9 +71,16 @@ export default function AdminDashboard({
 
     useEffect(() => {
         const ch = channel();
-        if (!ch) return;
+        if (!ch) {
+            console.warn('⚠️ Admin dashboard channel not available');
+            return;
+        }
+
+        console.log('✅ Admin dashboard subscribed to presence channel');
 
         const handleOrderPlaced = (event: any) => {
+            console.log('🍕 NEW ORDER EVENT RECEIVED:', event);
+
             toast.success('🍕 New Order Received!', {
                 description: `Order #${event.order.order_number} from ${event.order.customer_name} - $${Number(event.order.total).toFixed(2)}`,
                 action: {
@@ -93,16 +100,20 @@ export default function AdminDashboard({
         };
 
         const handleStatusUpdated = (event: any) => {
+            console.log('📦 STATUS UPDATE EVENT RECEIVED:', event);
+
             toast.info('📦 Order Status Updated', {
                 description: `Order #${event.order_number} is now ${event.status_label}`,
                 duration: 5000,
             });
         };
 
+        console.log('👂 Listening for .order.placed and .order.status.updated events...');
         ch.listen('.order.placed', handleOrderPlaced);
         ch.listen('.order.status.updated', handleStatusUpdated);
 
         return () => {
+            console.log('🔇 Unsubscribing from admin.dashboard');
             ch.stopListening('.order.placed');
             ch.stopListening('.order.status.updated');
         };

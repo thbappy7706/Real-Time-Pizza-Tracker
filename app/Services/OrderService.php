@@ -81,6 +81,12 @@ class OrderService
             ]);
 
             // Broadcast event
+            \Log::info('Broadcasting OrderPlaced event', [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+                'channels' => ['admin.dashboard', 'orders.'.$order->id],
+            ]);
+            
             broadcast(new OrderPlaced($order))->toOthers();
 
             return $order->fresh(['items.pizza', 'user', 'payment']);
