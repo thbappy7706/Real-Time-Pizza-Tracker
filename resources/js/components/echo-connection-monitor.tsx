@@ -22,14 +22,14 @@ export function EchoConnectionMonitor() {
     // Only show in development
     if (import.meta.env.DEV) {
         return (
-            <div className="fixed bottom-4 left-4 z-50 rounded-lg border bg-card px-3 py-2 text-xs shadow-md">
+            <div className="fixed bottom-4 right-4 z-50 rounded-lg border bg-card px-3 py-2 text-xs shadow-md">
                 <div className="flex items-center gap-2">
                     <div
                         className={`size-2 rounded-full ${connectionStatus === 'connected'
-                                ? 'bg-green-500'
-                                : connectionStatus === 'connecting'
-                                    ? 'bg-yellow-500 animate-pulse'
-                                    : 'bg-red-500'
+                            ? 'bg-green-500'
+                            : connectionStatus === 'connecting'
+                                ? 'bg-yellow-500 animate-pulse'
+                                : 'bg-red-500'
                             }`}
                     />
                     <span className="font-medium">

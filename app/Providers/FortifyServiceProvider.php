@@ -95,6 +95,7 @@ class FortifyServiceProvider extends ServiceProvider
      */
     private function configureRedirects(): void
     {
+        // Login redirect
         Fortify::redirects('login', function () {
             $user = auth()->user();
 
@@ -104,6 +105,19 @@ class FortifyServiceProvider extends ServiceProvider
             }
 
             // Redirect customers to menu
+            return '/menu';
+        });
+
+        // Registration redirect
+        Fortify::redirects('register', function () {
+            $user = auth()->user();
+
+            // Redirect admin users to admin dashboard
+            if ($user && method_exists($user, 'isAdmin') && $user->isAdmin()) {
+                return '/admin/dashboard';
+            }
+
+            // Redirect new customers to menu
             return '/menu';
         });
     }
