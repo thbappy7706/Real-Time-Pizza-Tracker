@@ -10,7 +10,7 @@ import {
     TrendingUp,
     Users,
 } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Area,
     AreaChart,
@@ -28,6 +28,7 @@ import {
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { playNotificationSoundDoubleBeep } from '@/utils/notification-sound';
 import {
     Table,
     TableBody,
@@ -59,12 +60,18 @@ interface Props {
 }
 
 export default function AdminDashboard({
-    stats,
-    activeOrders,
-    weeklyData,
-    statusDistribution,
+    stats: initialStats,
+    activeOrders: initialActiveOrders,
+    weeklyData: initialWeeklyData,
+    statusDistribution: initialStatusDistribution,
 }: Props) {
     const { auth } = usePage().props as any;
+
+    // State for real-time updates
+    const [stats, setStats] = useState(initialStats);
+    const [activeOrders, setActiveOrders] = useState(initialActiveOrders);
+    const [weeklyData, setWeeklyData] = useState(initialWeeklyData);
+    const [statusDistribution, setStatusDistribution] = useState(initialStatusDistribution);
 
     // Listen for new orders on admin.dashboard presence channel
     const { channel } = useEchoPresence('admin.dashboard');
@@ -81,6 +88,10 @@ export default function AdminDashboard({
         const handleOrderPlaced = (event: any) => {
             console.log('🍕 NEW ORDER EVENT RECEIVED:', event);
 
+            // Play notification sound
+            playNotificationSoundDoubleBeep();
+
+            // Show toast notification
             toast.success('🍕 New Order Received!', {
                 description: `Order #${event.order.order_number} from ${event.order.customer_name} - $${Number(event.order.total).toFixed(2)}`,
                 action: {
@@ -92,11 +103,56 @@ export default function AdminDashboard({
                 duration: 8000,
             });
 
-            // Play notification sound (optional)
-            try {
-                const audio = new Audio('/notification.mp3');
-                audio.play().catch(() => { });
-            } catch (e) { }
+            // Update stats
+            setStats(prev => ({
+                ...prev,
+                total_orders_today: prev.total_orders_today + 1,
+                active_orders: prev.active_orders + 1,
+            }));
+
+            // Add new order to active orders list
+            setActiveOrders(prev => [{
+                id: event.order.id,
+                order_number: event.order.order_number,
+                customer_name: event.order.customer_name,
+                customer_phone: '',
+                status: event.order.status,
+                status_label: 'Placed',
+                total: event.order.total,
+                items_count: event.order.items_count,
+                delivery_address: '',
+                created_at: 'Just now',
+                estimated_delivery_time: null,
+                driver_name: null,
+            }, ...prev]);
+
+            // Update weekly data (today's data)
+            setWeeklyData(prev => {
+                const updated = [...prev];
+                const todayIndex = updated.length - 1; // Last item is today
+                if (updated[todayIndex]) {
+                    updated[todayIndex] = {
+                        ...updated[todayIndex],
+                        orders: updated[todayIndex].orders + 1,
+                    };
+                }
+                return updated;
+            });
+
+            // Update status distribution
+            setStatusDistribution(prev => {
+                const placedIndex = prev.findIndex(s => s.status === 'Placed');
+                if (placedIndex >= 0) {
+                    const updated = [...prev];
+                    updated[placedIndex] = {
+                        ...updated[placedIndex],
+                        count: updated[placedIndex].count + 1,
+                    };
+                    return updated;
+                } else {
+                    return [...prev, { status: 'Placed', count: 1 }];
+                }
+            });
         };
 
         const handleStatusUpdated = (event: any) => {
@@ -105,6 +161,60 @@ export default function AdminDashboard({
             toast.info('📦 Order Status Updated', {
                 description: `Order #${event.order_number} is now ${event.status_label}`,
                 duration: 5000,
+            });
+
+            // Update active orders list
+            setActiveOrders(prev =>
+                prev.map(order =>
+                    order.id === event.order_id
+                        ? {
+                            ...order,
+                            status: event.status,
+                            status_label: event.status_label,
+                            estimated_delivery_time: event.estimated_delivery_time ? new Date(event.estimated_delivery_time).toLocaleTimeString() : null,
+                        }
+                        : order
+                ).filter(order => {
+                    // Remove from active orders if delivered or cancelled
+                    return !['delivered', 'cancelled', 'rejected'].includes(order.status);
+                })
+            );
+
+            // Update active orders count
+            setStats(prev => ({
+                ...prev,
+                active_orders: prev.active_orders + (['delivered', 'cancelled', 'rejected'].includes(event.status) ? -1 : 0),
+                total_revenue_today: prev.total_revenue_today + (event.status === 'delivered' ? parseFloat(event.order_total || 0) : 0),
+            }));
+
+            // Update status distribution
+            setStatusDistribution(prev => {
+                const updated = [...prev];
+
+                // Decrease previous status count
+                const prevStatusIndex = updated.findIndex(s =>
+                    s.status.toLowerCase().replace(/\s/g, '_') === event.previous_status
+                );
+                if (prevStatusIndex >= 0 && updated[prevStatusIndex].count > 0) {
+                    updated[prevStatusIndex] = {
+                        ...updated[prevStatusIndex],
+                        count: updated[prevStatusIndex].count - 1,
+                    };
+                }
+
+                // Increase new status count
+                const newStatusLabel = event.status_label.replace(/_/g, ' ');
+                const newStatusIndex = updated.findIndex(s => s.status === newStatusLabel);
+                if (newStatusIndex >= 0) {
+                    updated[newStatusIndex] = {
+                        ...updated[newStatusIndex],
+                        count: updated[newStatusIndex].count + 1,
+                    };
+                } else {
+                    updated.push({ status: newStatusLabel, count: 1 });
+                }
+
+                return updated.filter(s => s.count > 0);
             });
         };
 
