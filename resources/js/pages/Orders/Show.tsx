@@ -53,6 +53,8 @@ export default function OrderShow({ order: initialOrder }: Props) {
         `orders.${order.id}`,
         '.order.status.updated',
         (event: any) => {
+            console.log('📦 Order status update received:', event);
+
             // Update order state with new status and progress
             setOrder((prev) => ({
                 ...prev,
@@ -68,6 +70,8 @@ export default function OrderShow({ order: initialOrder }: Props) {
                 duration: 5000,
             });
         },
+        [order.id], // Dependencies - re-subscribe if order ID changes
+        'private', // Explicitly set as private channel
     );
 
     const isCancelled = order.status === 'cancelled' || order.status === 'rejected';
